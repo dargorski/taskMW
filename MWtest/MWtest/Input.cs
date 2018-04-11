@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,45 +17,57 @@ namespace MWtest
         DateTime firstDateParsed;
         DateTime secondDateParsed;
 
+        DateTimeStyles styles;
+        CultureInfo culture;
+
+        String[] arguments;
+
         public void ReturnInput()
         {
 
-            
+
             Console.WriteLine();
-            String[] arguments = Environment.GetCommandLineArgs();
-            if (arguments.Length > 1)
-            {
-                firstDate = arguments[1];
-            } else
+            arguments = Environment.GetCommandLineArgs();
+            culture = new CultureInfo("de-DE");
+            styles = DateTimeStyles.AssumeLocal;
+            
+            
+            if (arguments.Length < 3)
             {
                 Console.WriteLine("Did not receive any arguments");
                 return;
             }
-
-            if(arguments.Length > 2)
+            if (arguments.Length > 3)
             {
-                secondDate = arguments[2];
-            } else
-            {
-                Console.WriteLine("Did not receive second argument");
+                Console.WriteLine("Too many arguments. \nPlease enter two dates.");
                 return;
             }
 
-            if(DateTime.TryParse(firstDate, out firstDateParsed))
+            if (arguments.Length == 3)
             {
-                Console.WriteLine(firstDateParsed);
-            } else
-            {
-                Console.WriteLine("Couldn't parse 1st argument to DateTime");
+                firstDate = arguments[1];
+                secondDate = arguments[2];
             }
 
-            if (DateTime.TryParse(secondDate, out secondDateParsed))
+
+            if (DateTime.TryParse(firstDate,culture,styles, out firstDateParsed))
+            {
+                Console.WriteLine(firstDateParsed);
+            }
+            else
+            {
+                Console.WriteLine("Couldn't parse 1st argument to DateTime");
+                return;
+            }
+
+            if (DateTime.TryParse(secondDate, culture, styles, out secondDateParsed))
             {
                 Console.WriteLine(secondDateParsed);
             }
             else
             {
-                Console.WriteLine("Couldn't parse 2st argument to DateTime");
+                Console.WriteLine("Couldn't parse 2nd argument to DateTime");
+                return;
             }
 
 
@@ -63,3 +76,4 @@ namespace MWtest
         }
     }
 }
+
