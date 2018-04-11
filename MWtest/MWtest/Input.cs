@@ -9,13 +9,15 @@ namespace MWtest
 {
     class Input
     {
-        //private DateTime firstDate;
-        //private DateTime secondDate;
         string firstDate;
         string secondDate;
 
-        DateTime firstDateParsed;
-        DateTime secondDateParsed;
+        public DateTime firstDateParsed { get; private set;}
+        public DateTime secondDateParsed { get; private set; }
+
+        DateTime outFirstDate;
+        DateTime outSecondDate;
+
 
         DateTimeStyles styles;
         CultureInfo culture;
@@ -24,14 +26,11 @@ namespace MWtest
 
         public void ReturnInput()
         {
-
-
             Console.WriteLine();
             arguments = Environment.GetCommandLineArgs();
             culture = new CultureInfo("de-DE");
             styles = DateTimeStyles.AssumeLocal;
-            
-            
+                        
             if (arguments.Length < 3)
             {
                 Console.WriteLine("Did not receive any arguments");
@@ -49,10 +48,9 @@ namespace MWtest
                 secondDate = arguments[2];
             }
 
-
-            if (DateTime.TryParse(firstDate,culture,styles, out firstDateParsed))
+            if (DateTime.TryParse(firstDate,culture,styles, out outFirstDate))
             {
-                Console.WriteLine(firstDateParsed);
+                firstDateParsed = outFirstDate;
             }
             else
             {
@@ -60,9 +58,9 @@ namespace MWtest
                 return;
             }
 
-            if (DateTime.TryParse(secondDate, culture, styles, out secondDateParsed))
+            if (DateTime.TryParse(secondDate, culture, styles, out outSecondDate))
             {
-                Console.WriteLine(secondDateParsed);
+                secondDateParsed = outSecondDate;
             }
             else
             {

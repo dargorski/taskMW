@@ -8,10 +8,13 @@ namespace MWtest
 {
     class Program
     {
+        static public Input input = new Input();
+
         static void Main(string[] args)
         {
-            Input input = new Input();
             input.ReturnInput();
+            //Output output = new Output();
+           // output.CalculateAndOutput(input.ReturnInput());
         }
     }
 }
