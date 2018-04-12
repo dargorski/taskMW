@@ -18,9 +18,10 @@ namespace MWtest
         DateTime outFirstDate;
         DateTime outSecondDate;
 
-
         DateTimeStyles styles;
         CultureInfo culture;
+
+        int requiredArgumentLength;
 
         String[] arguments;
 
@@ -30,10 +31,11 @@ namespace MWtest
             arguments = Environment.GetCommandLineArgs();
             culture = new CultureInfo("de-DE");
             styles = DateTimeStyles.AssumeLocal;
+            requiredArgumentLength = 10;
                         
             if (arguments.Length < 3)
             {
-                Console.WriteLine("Did not receive any arguments");
+                Console.WriteLine("Did not receive two arguments");
                 Environment.Exit(1);
             }
             if (arguments.Length > 3)
@@ -44,6 +46,11 @@ namespace MWtest
 
             if (arguments.Length == 3)
             {
+                if (arguments[1].Length != requiredArgumentLength || arguments[2].Length != requiredArgumentLength)
+                {
+                    Console.WriteLine("Please provide date in following format: DD.MM.YYYY");
+                    Environment.Exit(1);
+                }
                 firstDate = arguments[1];
                 secondDate = arguments[2];
             }
@@ -54,7 +61,7 @@ namespace MWtest
             }
             else
             {
-                Console.WriteLine("Couldn't parse 1st argument to DateTime");
+                Console.WriteLine("Couldn't parse 1st argument to DateTime. \nPlease provide date in following format: DD.MM.YYYY");
                 Environment.Exit(1);
             }
 
@@ -64,7 +71,7 @@ namespace MWtest
             }
             else
             {
-                Console.WriteLine("Couldn't parse 2nd argument to DateTime");
+                Console.WriteLine("Couldn't parse 2nd argument to DateTime. \nPlease provide date in following format: DD.MM.YYYY");
                 Environment.Exit(1);
             }
         }
