@@ -9,12 +9,21 @@ namespace MWtest
     class Program
     {
         static public Input input = new Input();
+        static public Output output = new Output();
 
         static void Main(string[] args)
         {
             input.ReturnInput();
-            //Output output = new Output();
-           // output.CalculateAndOutput(input.ReturnInput());
+
+            try
+            {
+                output.CalculateAndOutput(input.firstDateParsed, input.secondDateParsed);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception caught", e);
+            }
+
         }
     }
 }

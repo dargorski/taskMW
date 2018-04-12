@@ -34,12 +34,12 @@ namespace MWtest
             if (arguments.Length < 3)
             {
                 Console.WriteLine("Did not receive any arguments");
-                return;
+                Environment.Exit(1);
             }
             if (arguments.Length > 3)
             {
                 Console.WriteLine("Too many arguments. \nPlease enter two dates.");
-                return;
+                Environment.Exit(1);
             }
 
             if (arguments.Length == 3)
@@ -55,7 +55,7 @@ namespace MWtest
             else
             {
                 Console.WriteLine("Couldn't parse 1st argument to DateTime");
-                return;
+                Environment.Exit(1);
             }
 
             if (DateTime.TryParse(secondDate, culture, styles, out outSecondDate))
@@ -65,12 +65,8 @@ namespace MWtest
             else
             {
                 Console.WriteLine("Couldn't parse 2nd argument to DateTime");
-                return;
+                Environment.Exit(1);
             }
-
-
-
-
         }
     }
 }
