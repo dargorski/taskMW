@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace MWtest
@@ -11,6 +12,7 @@ namespace MWtest
     {
         string firstDate;
         string secondDate;
+        string datePattern;
 
         public DateTime firstDateParsed { get; private set;}
         public DateTime secondDateParsed { get; private set; }
@@ -32,6 +34,7 @@ namespace MWtest
             culture = new CultureInfo("de-DE");
             styles = DateTimeStyles.AssumeLocal;
             requiredArgumentLength = 10;
+            datePattern = "dd.MM.yyyy";
                         
             if (arguments.Length < 3)
             {
@@ -55,7 +58,7 @@ namespace MWtest
                 secondDate = arguments[2];
             }
 
-            if (DateTime.TryParse(firstDate,culture,styles, out outFirstDate))
+            if (DateTime.TryParseExact(firstDate,datePattern, culture,styles, out outFirstDate))
             {
                 firstDateParsed = outFirstDate;
             }
@@ -65,7 +68,7 @@ namespace MWtest
                 Environment.Exit(1);
             }
 
-            if (DateTime.TryParse(secondDate, culture, styles, out outSecondDate))
+            if (DateTime.TryParseExact(secondDate, datePattern, culture, styles, out outSecondDate))
             {
                 secondDateParsed = outSecondDate;
             }
