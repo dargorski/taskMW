@@ -13,7 +13,8 @@ namespace MWtest
     {
         string firstDate;
         string secondDate;
-        public string datePattern { get; private set; }
+        string datePattern;
+        public string cultureInfoName { get; private set; }
 
         public DateTime firstDateParsed { get; private set;}
         public DateTime secondDateParsed { get; private set; }
@@ -35,7 +36,7 @@ namespace MWtest
 
             CultureInfo[] cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
 
-            List<string> datePatterns = new List<string>();
+            Dictionary<string, string> datePatterns = new Dictionary<string, string>();
             List<string> correctDatePatterns = new List<string>();
 
             if (arguments.Length < 3)
@@ -58,9 +59,18 @@ namespace MWtest
             for (int i = 0; i < cultures.Length; i++)
             {
                 if (DateTime.TryParseExact(firstDate, cultures[i].DateTimeFormat.ShortDatePattern, CultureInfo.InvariantCulture, DateTimeStyles.None, out outFirstDate))
-                {             
-                    datePatterns.Add(cultures[i].DateTimeFormat.ShortDatePattern);
-                   // Console.WriteLine(cultures[i].DateTimeFormat.ShortDatePattern);                    
+                {
+                    try
+                    {
+                        datePatterns.Add(cultures[i].DateTimeFormat.ShortDatePattern, cultures[i].Name);
+                        Console.WriteLine("Added '{0}' to dictionary.", cultures[i].DateTimeFormat.ShortDatePattern);
+                    } catch (ArgumentException)
+                    {
+                        Console.WriteLine("An element with key = '{0}' already exists.", cultures[i].DateTimeFormat.ShortDatePattern);
+                    }
+
+                    
+                    
                 }
                 if (i == (cultures.Length - 1) && datePatterns.Count == 0)
                 {
@@ -69,23 +79,26 @@ namespace MWtest
                 }
             }
 
-            //Console.WriteLine("==============================================");
+            Console.WriteLine("==============================================");
 
-            for (int i = 0; i < datePatterns.Count; i++)
+            foreach (var pattern in datePatterns)
             {
-                if (DateTime.TryParseExact(secondDate, datePatterns[i], CultureInfo.InvariantCulture, styles, out outSecondDate))
+                if (DateTime.TryParseExact(secondDate, pattern.Key, CultureInfo.InvariantCulture, styles, out outSecondDate))
                 {
-                    correctDatePatterns.Add(datePatterns[i]);
-                   // Console.WriteLine(datePatterns[i]);
+                    correctDatePatterns.Add(pattern.Key);
+                    Console.WriteLine(pattern.Key);
                 }
-                if (i == (datePatterns.Count - 1) && correctDatePatterns.Count == 0)
-                {
-                    Console.WriteLine("Unable to parse '{0}' to any formats which are fine for '{1}'.\nPlease provide dates with the same format.", secondDate, firstDate);
-                    Environment.Exit(1);
-                }
+            } 
+            if (correctDatePatterns.Count == 0)
+            {
+               Console.WriteLine("Unable to parse '{0}' to any formats which are fine for '{1}'.\nPlease provide dates with the same format.", secondDate, firstDate);
+               Environment.Exit(1);
             }
+            
 
             datePattern = correctDatePatterns[0];
+
+            cultureInfoName = datePatterns[datePattern];
             
             DateTime.TryParseExact(firstDate, datePattern, CultureInfo.InvariantCulture, DateTimeStyles.None, out outFirstDate);
             firstDateParsed = outFirstDate;

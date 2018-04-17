@@ -17,7 +17,7 @@ namespace MWtest
 
             try
             {
-                output.CalculateAndOutput(input.firstDateParsed, input.secondDateParsed, input.datePattern);
+                output.CalculateAndOutput(input.firstDateParsed, input.secondDateParsed, input.cultureInfoName);
             }
             catch (Exception e)
             {
