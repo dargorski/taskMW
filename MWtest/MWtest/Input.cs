@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace MWtest
     {
         string firstDate;
         string secondDate;
-        string datePattern;
+        public string datePattern { get; private set; }
 
         public DateTime firstDateParsed { get; private set;}
         public DateTime secondDateParsed { get; private set; }
@@ -21,9 +22,8 @@ namespace MWtest
         DateTime outSecondDate;
 
         DateTimeStyles styles;
-        CultureInfo culture;
 
-        int requiredArgumentLength;
+        //int requiredArgumentLength;
 
         String[] arguments;
 
@@ -31,11 +31,13 @@ namespace MWtest
         {
             Console.WriteLine();
             arguments = Environment.GetCommandLineArgs();
-            culture = new CultureInfo("de-DE");
-            styles = DateTimeStyles.AssumeLocal;
-            requiredArgumentLength = 10;
-            datePattern = "dd.MM.yyyy";
-                        
+            styles = DateTimeStyles.None;
+
+            CultureInfo[] cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
+
+            List<string> datePatterns = new List<string>();
+            List<string> correctDatePatterns = new List<string>();
+
             if (arguments.Length < 3)
             {
                 Console.WriteLine("Did not receive two arguments");
@@ -49,34 +51,47 @@ namespace MWtest
 
             if (arguments.Length == 3)
             {
-                if (arguments[1].Length != requiredArgumentLength || arguments[2].Length != requiredArgumentLength)
-                {
-                    Console.WriteLine("Please provide date in following format: DD.MM.YYYY");
-                    Environment.Exit(1);
-                }
+                
                 firstDate = arguments[1];
                 secondDate = arguments[2];
             }
+            for (int i = 0; i < cultures.Length; i++)
+            {
+                if (DateTime.TryParseExact(firstDate, cultures[i].DateTimeFormat.ShortDatePattern, CultureInfo.InvariantCulture, DateTimeStyles.None, out outFirstDate))
+                {             
+                    datePatterns.Add(cultures[i].DateTimeFormat.ShortDatePattern);
+                   // Console.WriteLine(cultures[i].DateTimeFormat.ShortDatePattern);                    
+                }
+                if (i == (cultures.Length - 1) && datePatterns.Count == 0)
+                {
+                    Console.WriteLine("Unable to parse '{0}' to DateTime", firstDate);
+                    Environment.Exit(1);
+                }
+            }
 
-            if (DateTime.TryParseExact(firstDate,datePattern, culture,styles, out outFirstDate))
+            //Console.WriteLine("==============================================");
+
+            for (int i = 0; i < datePatterns.Count; i++)
             {
-                firstDateParsed = outFirstDate;
-            }
-            else
-            {
-                Console.WriteLine("Couldn't parse 1st argument to DateTime. \nPlease provide date in following format: DD.MM.YYYY");
-                Environment.Exit(1);
+                if (DateTime.TryParseExact(secondDate, datePatterns[i], CultureInfo.InvariantCulture, styles, out outSecondDate))
+                {
+                    correctDatePatterns.Add(datePatterns[i]);
+                   // Console.WriteLine(datePatterns[i]);
+                }
+                if (i == (datePatterns.Count - 1) && correctDatePatterns.Count == 0)
+                {
+                    Console.WriteLine("Unable to parse '{0}' to any formats which are fine for '{1}'.\nPlease provide dates with the same format.", secondDate, firstDate);
+                    Environment.Exit(1);
+                }
             }
 
-            if (DateTime.TryParseExact(secondDate, datePattern, culture, styles, out outSecondDate))
-            {
-                secondDateParsed = outSecondDate;
-            }
-            else
-            {
-                Console.WriteLine("Couldn't parse 2nd argument to DateTime. \nPlease provide date in following format: DD.MM.YYYY");
-                Environment.Exit(1);
-            }
+            datePattern = correctDatePatterns[0];
+            
+            DateTime.TryParseExact(firstDate, datePattern, CultureInfo.InvariantCulture, DateTimeStyles.None, out outFirstDate);
+            firstDateParsed = outFirstDate;
+
+            DateTime.TryParseExact(secondDate, datePattern, CultureInfo.InvariantCulture, DateTimeStyles.None, out outSecondDate);
+            secondDateParsed = outSecondDate;
         }
     }
 }

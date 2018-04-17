@@ -11,16 +11,26 @@ namespace MWtest
     {
         string firstDateFormatted, secondDateFormatted;
 
-        public void CalculateAndOutput(DateTime firstDate, DateTime secondDate)
+        public void CalculateAndOutput(DateTime firstDate, DateTime secondDate, string datePattern)
         {
+            Console.WriteLine(datePattern);
+
+            //Console.WriteLine(firstDate.ToString() + " " + secondDate.ToString());
+
             String[] dateFormats = { "dd.MM.yyyy", "dd.MM", "dd" };
             TimeSpan timeSpan = secondDate - firstDate;
+            //Console.WriteLine(timeSpan.TotalDays);
 
-            if(timeSpan.TotalDays <= 0)
+            if(timeSpan.TotalDays < 0)
             {
-                Console.WriteLine("First date is greater or equal second date.");
+                Console.WriteLine("First date is greater than second date.");
                 Environment.Exit(1);
-            }            
+            }
+            if(timeSpan.TotalDays == 0)
+            {
+                Console.WriteLine(secondDate.ToString(dateFormats[0]));
+                Environment.Exit(1);
+            }
 
             secondDateFormatted = secondDate.ToString(dateFormats[0]);
 
