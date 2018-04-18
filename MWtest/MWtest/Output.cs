@@ -11,48 +11,74 @@ namespace MWtest
     class Output
     {
         string firstDateFormatted, secondDateFormatted;
+        string datePatternForDayAndMonth;
 
-        public void CalculateAndOutput(DateTime firstDate, DateTime secondDate, string cultureInfoName)
+        public void CalculateAndOutput(DateTime firstDate, DateTime secondDate, string datePattern)
         {
-           // Console.WriteLine(datePattern);
-
-            //Console.WriteLine(firstDate.ToString() + " " + secondDate.ToString());
-
-            String[] dateFormats = { "dd.MM.yyyy", "dd.MM", "dd" };
             TimeSpan timeSpan = secondDate - firstDate;
-            //Console.WriteLine(timeSpan.TotalDays);
-            CultureInfo ci = new CultureInfo(cultureInfoName);
 
-            if(timeSpan.TotalDays < 0)
+            if (timeSpan.TotalDays < 0)
             {
                 Console.WriteLine("First date is greater than second date.");
                 Environment.Exit(1);
             }
-
-            secondDateFormatted = secondDate.ToString("d", ci);
-
+            secondDateFormatted = secondDate.ToString(datePattern, CultureInfo.InvariantCulture);
+            firstDateFormatted = firstDate.ToString(datePattern, CultureInfo.InvariantCulture);
             if (timeSpan.TotalDays == 0)
             {
                 Console.WriteLine(secondDateFormatted);
                 Environment.Exit(1);
             }
 
-            if (firstDate.Year != secondDate.Year)
-            {
-                firstDateFormatted = firstDate.ToString("d", ci);
-                
-            } else if (firstDate.Month != secondDate.Month)
-            {
-                firstDateFormatted = firstDate.ToString("M", ci);
-            } else
-            {
-                firstDateFormatted = firstDate.ToString(dateFormats[2]);
-            }      
+            datePatternForDayAndMonth = datePattern
+                    .Replace("-yyyy", "")
+                    .Replace("yyyy-", "")
+                    .Replace("-yyyy", "")
+                    .Replace("yyyy.", "")
+                    .Replace(".yyyy", "")
+                    .Replace("/yyyy", "")
+                    .Replace("yyyy/", "")
+                    .Replace(".yy", "")
+                    .Replace("yy.", "")
+                    .Replace("/yy", "")
+                    .Replace("yy/", "")
+                    .Replace("yy-", "")
+                    .Replace("-yy", "");
 
-            Console.WriteLine(firstDateFormatted +  " - " + secondDateFormatted);
-            //Console.WriteLine(firstDateFormatted);
-            //Console.WriteLine(secondDate.ToString(dateFormats[0]));
+            if (datePattern.IndexOf('y') != 0)
+            {
+                if (firstDate.Year != secondDate.Year)
+                {
+                    firstDateFormatted = firstDate.ToString(datePattern, CultureInfo.InvariantCulture);
 
+                }
+                else if (firstDate.Month != secondDate.Month)
+                {
+                    firstDateFormatted = firstDate.ToString(datePatternForDayAndMonth, CultureInfo.InvariantCulture);
+                }
+                else
+                {
+                    firstDateFormatted = firstDate.Day.ToString();
+                }
+            }
+            if(datePattern.IndexOf('y') == 0)
+            {
+                if (firstDate.Year != secondDate.Year)
+                {
+                    secondDateFormatted = secondDate.ToString(datePattern, CultureInfo.InvariantCulture);
+
+                }
+                else if (firstDate.Month != secondDate.Month)
+                {
+                    secondDateFormatted = secondDate.ToString(datePatternForDayAndMonth, CultureInfo.InvariantCulture);
+                }
+                else
+                {
+                    secondDateFormatted = secondDate.Day.ToString();
+                }
+            }
+
+            Console.WriteLine(firstDateFormatted + " - " + secondDateFormatted);
         }
     }
 }
